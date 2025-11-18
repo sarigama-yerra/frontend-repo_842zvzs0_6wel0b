@@ -1,49 +1,12 @@
-import { useState, useMemo, useEffect } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { Phone, MessageSquare, Mail, Globe, Bot, Inbox, Loader2, CheckCircle2, Play, Pause } from 'lucide-react'
+import { Phone, MessageSquare, Mail, Globe, Bot } from 'lucide-react'
 
 const channelChips = [
-  { icon: Phone, label: 'Voice', key: 'voice', color: 'from-emerald-400/80 to-emerald-500/40' },
-  { icon: MessageSquare, label: 'SMS', key: 'sms', color: 'from-cyan-400/80 to-sky-500/40' },
-  { icon: Mail, label: 'Email', key: 'email', color: 'from-violet-400/80 to-indigo-500/40' },
-  { icon: Globe, label: 'Web', key: 'web', color: 'from-amber-400/80 to-orange-500/40' },
+  { icon: Phone, label: 'Voice', color: 'from-emerald-400/70 to-emerald-500/30' },
+  { icon: MessageSquare, label: 'SMS', color: 'from-cyan-400/70 to-sky-500/30' },
+  { icon: Mail, label: 'Email', color: 'from-violet-400/70 to-indigo-500/30' },
+  { icon: Globe, label: 'Web', color: 'from-amber-400/70 to-orange-500/30' },
 ]
-
-const presets = [
-  {
-    label: 'Rear‑end, photos',
-    text:
-      'Policy #ABCD-1234. Rear-end collision on 2024-06-01 in Austin, TX. Photos attached of the rear bumper on a Honda Civic.',
-  },
-  {
-    label: 'Storm loss',
-    text:
-      'Policy number ZX-9988. Hail damage on 05/12/2024 in Denver, CO. Attached images of broken skylight.',
-  },
-  {
-    label: 'Injury + claim #',
-    text:
-      'Claim #CLM-7777. Slip and fall on 2024-03-14 in Seattle, WA. Witness statements and pictures included.',
-  },
-]
-
-function extractEntities(text) {
-  const policyMatch = text.match(/policy\s*(#:|number|no\.?|)\s*([A-Z0-9-]{4,})/i)
-  const claimMatch = text.match(/claim\s*(#:|number|no\.?|)\s*([A-Z0-9-]{4,})/i)
-  const dateMatch = text.match(/(loss|accident|hail|storm|fall|on)\s*(date|on)?\s*(:)?\s*(\d{4}-\d{2}-\d{2}|\d{1,2}\/(\d{1,2})\/(\d{2,4}))/i)
-  const cityState = text.match(/in\s+([A-Za-z\s]+),?\s*([A-Z]{2})/i)
-  const vehicleMatch = text.match(/(honda|toyota|ford|chevy|bmw|audi|mercedes|tesla)\s*([a-z0-9-]+)/i)
-  const photosMatch = text.match(/photos?|pictures?|images?|attached|attachments?/i)
-
-  return {
-    policy: policyMatch ? policyMatch[2] : undefined,
-    claim: claimMatch ? claimMatch[2] : undefined,
-    lossDate: dateMatch ? dateMatch[4] : undefined,
-    location: cityState ? `${cityState[1].trim()}, ${cityState[2]}` : undefined,
-    vehicle: vehicleMatch ? `${vehicleMatch[1]} ${vehicleMatch[2]}` : undefined,
-    attachments: photosMatch ? 'Attachments detected' : undefined,
-  }
-}
 
 export default function Hero() {
   const reduce = useReducedMotion()
@@ -53,40 +16,6 @@ export default function Hero() {
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay },
   })
-
-  // Demo state
-  const [text, setText] = useState(
-    'Policy #ABCD-1234. Rear-end collision on 2024-06-01 in Austin, TX. Photos attached of the rear bumper on a Honda Civic.'
-  )
-  const [channel, setChannel] = useState('sms')
-  const [processing, setProcessing] = useState(false)
-  const [step, setStep] = useState(0)
-  const steps = ['Ingesting', 'Validating', 'Extracting', 'Creating FNOL']
-
-  const entities = useMemo(() => extractEntities(text), [text])
-
-  useEffect(() => {
-    let timers = []
-    if (processing) {
-      steps.forEach((_, i) => {
-        timers.push(
-          setTimeout(() => setStep(i + 1), (i + 1) * (reduce ? 200 : 500))
-        )
-      })
-      timers.push(
-        setTimeout(() => setProcessing(false), steps.length * (reduce ? 200 : 500) + (reduce ? 100 : 300))
-      )
-    } else {
-      setStep(0)
-    }
-    return () => timers.forEach(clearTimeout)
-  }, [processing, reduce])
-
-  const handlePlay = () => {
-    setProcessing(true)
-  }
-
-  const ChannelIcon = channelChips.find((c) => c.key === channel)?.icon || MessageSquare
 
   return (
     <section id="home" className="relative overflow-hidden pt-28">
@@ -126,26 +55,26 @@ export default function Hero() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="grid lg:grid-cols-12 gap-12 items-start">
-          {/* Copy + Micro Demo */}
+          {/* Copy only */}
           <div className="lg:col-span-6">
             <motion.div
               {...fadeUp(0)}
               className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200 mb-5 backdrop-blur"
             >
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              AI-powered intake from all channels for FNOL
+              AI-powered omnichannel intake for FNOL
             </motion.div>
             <motion.h1
               {...fadeUp(0.05)}
               className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.05]"
             >
-              FNOL from any channel — structured, validated, and routed by AI
+              Connect every channel. Create structured claims instantly.
             </motion.h1>
             <motion.p
               {...fadeUp(0.1)}
               className="mt-6 text-lg text-slate-200/90 max-w-2xl"
             >
-              Turn voice, SMS, email, and web into structured First Notice of Loss. Validate ACORD, extract entities, and route next steps automatically.
+              Voice, SMS, email, and web flow through one AI router that validates ACORD, extracts entities, and routes action—no manual triage.
             </motion.p>
             <motion.div
               {...fadeUp(0.15)}
@@ -155,7 +84,7 @@ export default function Hero() {
                 href="#cta"
                 className="inline-flex justify-center rounded-lg bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-sky-500/30 hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
               >
-                Start free
+                Get started
               </a>
               <a
                 href="#pricing"
@@ -165,165 +94,8 @@ export default function Hero() {
               </a>
             </motion.div>
 
-            {/* Micro demo: preset → play → assemble */}
             <motion.div
               {...fadeUp(0.2)}
-              className="mt-8 rounded-xl border border-white/10 bg-white/5 backdrop-blur p-4"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-                <div className="flex items-center gap-2 text-sm font-medium text-white">
-                  <ChannelIcon className="h-4 w-4" /> Try the flow
-                </div>
-                <div className="flex items-center gap-2">
-                  {channelChips.map((c) => (
-                    <button
-                      key={c.key}
-                      onClick={() => setChannel(c.key)}
-                      className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-xs backdrop-blur transition ${
-                        channel === c.key
-                          ? 'border-cyan-400/40 bg-cyan-500/15 text-cyan-100'
-                          : 'border-white/10 bg-white/5 text-slate-200 hover:bg-white/10'
-                      }`}
-                      aria-pressed={channel === c.key}
-                    >
-                      <c.icon className="h-3.5 w-3.5" /> {c.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <label htmlFor="micro-demo" className="sr-only">
-                Describe the incident
-              </label>
-              <textarea
-                id="micro-demo"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                rows={3}
-                className="w-full resize-none rounded-lg bg-slate-900/60 text-slate-100 placeholder-slate-400 border border-white/10 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400/40"
-                placeholder="e.g., Policy #12345. Rear-end collision on 2024-06-01 in Austin, TX. Photos attached."
-              />
-
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                {presets.map((p) => (
-                  <button
-                    key={p.label}
-                    onClick={() => setText(p.text)}
-                    className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-slate-200 hover:bg-white/10"
-                  >
-                    {p.label}
-                  </button>
-                ))}
-                <span className="mx-1 h-4 w-px bg-white/10" />
-                <button
-                  onClick={processing ? undefined : handlePlay}
-                  disabled={processing}
-                  className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-cyan-500 to-indigo-500 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
-                >
-                  {processing ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" /> Processing
-                    </>
-                  ) : (
-                    <>
-                      <Play className="h-4 w-4" /> Create FNOL
-                    </>
-                  )}
-                </button>
-                {!reduce && (
-                  <div className="ml-auto min-w-[120px] h-2 rounded-full bg-white/10 overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-cyan-400 to-indigo-500 transition-all"
-                      style={{ width: `${(step / steps.length) * 100}%` }}
-                    />
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="rounded-lg border border-white/10 bg-white/5 p-3">
-                  <div className="text-xs uppercase tracking-wide text-slate-300/80 mb-2">
-                    Entities
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {Object.entries(entities).filter(([, v]) => v).length === 0 && (
-                      <span className="text-xs text-slate-400">None yet</span>
-                    )}
-                    {entities.policy && (
-                      <span className="text-xs px-2 py-1 rounded-md bg-emerald-500/20 text-emerald-200 border border-emerald-400/30">
-                        Policy: {entities.policy}
-                      </span>
-                    )}
-                    {entities.claim && (
-                      <span className="text-xs px-2 py-1 rounded-md bg-sky-500/20 text-sky-200 border border-sky-400/30">
-                        Claim: {entities.claim}
-                      </span>
-                    )}
-                    {entities.lossDate && (
-                      <span className="text-xs px-2 py-1 rounded-md bg-indigo-500/20 text-indigo-200 border border-indigo-400/30">
-                        Loss: {entities.lossDate}
-                      </span>
-                    )}
-                    {entities.vehicle && (
-                      <span className="text-xs px-2 py-1 rounded-md bg-violet-500/20 text-violet-200 border border-violet-400/30">
-                        Vehicle: {entities.vehicle}
-                      </span>
-                    )}
-                    {entities.location && (
-                      <span className="text-xs px-2 py-1 rounded-md bg-amber-500/20 text-amber-200 border border-amber-400/30">
-                        Location: {entities.location}
-                      </span>
-                    )}
-                    {entities.attachments && (
-                      <span className="text-xs px-2 py-1 rounded-md bg-cyan-500/20 text-cyan-200 border border-cyan-400/30">
-                        {entities.attachments}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="rounded-lg border border-white/10 bg-white/5 p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="text-xs uppercase tracking-wide text-slate-300/80">
-                      FNOL Preview
-                    </div>
-                    <div className="text-[10px] text-slate-400">
-                      {processing ? steps[Math.max(0, step - 1)] : 'Ready'}
-                    </div>
-                  </div>
-                  {/* Card body */}
-                  {processing ? (
-                    <div className="animate-pulse space-y-2">
-                      <div className="h-3 w-1/2 rounded bg-white/10" />
-                      <div className="h-3 w-2/3 rounded bg-white/10" />
-                      <div className="h-3 w-1/3 rounded bg-white/10" />
-                      <div className="h-3 w-3/4 rounded bg-white/10" />
-                    </div>
-                  ) : (
-                    <ul className="text-xs text-slate-200/90 space-y-1">
-                      <li className="flex items-center gap-2">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" />
-                        Policy {entities.policy ? `#${entities.policy}` : '— add a policy #'}
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" />
-                        Loss date {entities.lossDate ? entities.lossDate : '— add a date'}
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" />
-                        Location {entities.location ? entities.location : '— add city, ST'}
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" />
-                        Routing: Smart Inbox → Triage
-                      </li>
-                    </ul>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              {...fadeUp(0.25)}
               className="mt-6 flex items-center gap-6 text-sm text-slate-200/80"
             >
               <div className="flex items-center gap-2">
@@ -338,10 +110,28 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          {/* Visual: Channel → AI Router → Smart Inbox */}
+          {/* Visual: Connection Network */}
           <div className="lg:col-span-6">
             <div className="relative aspect-[4/3] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden">
-              {/* Animated network lines */}
+              {/* Soft aurora */}
+              <div className="absolute inset-0 opacity-60">
+                <div
+                  className="absolute left-1/3 top-1/4 h-64 w-64 rounded-full blur-3xl"
+                  style={{
+                    background:
+                      'radial-gradient(35% 35% at 50% 50%, rgba(56,189,248,0.25) 0%, rgba(56,189,248,0) 70%)',
+                  }}
+                />
+                <div
+                  className="absolute right-1/4 bottom-1/4 h-64 w-64 rounded-full blur-3xl"
+                  style={{
+                    background:
+                      'radial-gradient(35% 35% at 50% 50%, rgba(99,102,241,0.25) 0%, rgba(99,102,241,0) 70%)',
+                  }}
+                />
+              </div>
+
+              {/* Network lines */}
               <svg
                 className="absolute inset-0 w-full h-full"
                 viewBox="0 0 800 600"
@@ -349,87 +139,98 @@ export default function Hero() {
                 xmlns="http://www.w3.org/2000/svg"
                 aria-hidden
               >
+                {/* Core radial connections to center */}
                 {[
-                  'M80 120 C 220 180, 320 200, 400 300',
-                  'M720 140 C 600 220, 520 260, 400 300',
+                  'M90 120 C 240 180, 320 220, 400 300',
+                  'M710 130 C 600 220, 520 260, 400 300',
                   'M120 520 C 260 460, 320 380, 400 300',
-                  'M700 500 C 560 420, 480 360, 400 300',
+                  'M690 500 C 560 420, 480 360, 400 300',
                 ].map((d, i) => (
                   <motion.path
-                    key={i}
+                    key={`core-${i}`}
                     d={d}
-                    stroke={i % 2 === 0 ? 'url(#grad1)' : 'url(#grad2)'}
+                    stroke={i % 2 === 0 ? 'url(#g1)' : 'url(#g2)'}
                     strokeWidth="2"
                     strokeLinecap="round"
                     initial={{ pathLength: 0, opacity: 0 }}
                     animate={{ pathLength: 1, opacity: 0.9 }}
-                    transition={{
-                      duration: reduce ? 0.6 : 1.6,
-                      delay: 0.2 + i * 0.1,
-                      ease: 'easeOut',
-                    }}
+                    transition={{ duration: reduce ? 0.6 : 1.6, delay: 0.15 + i * 0.1, ease: 'easeOut' }}
                   />
                 ))}
+
+                {/* Subtle mesh between peripheral nodes */}
+                {[
+                  'M180 200 Q 260 160 340 220',
+                  'M620 200 Q 540 160 460 220',
+                  'M200 420 Q 300 460 360 380',
+                  'M600 420 Q 500 460 440 380',
+                  'M200 300 Q 400 260 600 300',
+                ].map((d, i) => (
+                  <motion.path
+                    key={`mesh-${i}`}
+                    d={d}
+                    stroke="rgba(148,163,184,0.35)"
+                    strokeWidth="1.2"
+                    strokeLinecap="round"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 + i * 0.08, duration: 0.6 }}
+                  />
+                ))}
+
+                {/* Constellation nodes */}
+                {[
+                  [180, 200], [340, 220], [460, 220], [620, 200],
+                  [200, 300], [600, 300], [360, 380], [440, 380],
+                  [220, 420], [580, 420], [260, 160], [540, 160],
+                ].map(([x, y], i) => (
+                  <motion.circle
+                    key={`node-${i}`}
+                    cx={x}
+                    cy={y}
+                    r={3}
+                    fill={i % 3 === 0 ? '#22d3ee' : i % 3 === 1 ? '#34d399' : '#6366f1'}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={reduce ? { opacity: 0.9, scale: 1 } : { opacity: [0.6, 0.95, 0.6], scale: [0.95, 1, 0.95] }}
+                    transition={{ duration: 3 + (i % 4) * 0.5, repeat: Infinity, delay: i * 0.05 }}
+                  />
+                ))}
+
                 <defs>
-                  <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="1">
+                  <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.9" />
                     <stop offset="100%" stopColor="#6366f1" stopOpacity="0.9" />
                   </linearGradient>
-                  <linearGradient id="grad2" x1="1" y1="0" x2="0" y2="1">
+                  <linearGradient id="g2" x1="1" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#34d399" stopOpacity="0.9" />
                     <stop offset="100%" stopColor="#22d3ee" stopOpacity="0.9" />
                   </linearGradient>
                 </defs>
               </svg>
 
-              {/* Moving payload orbs along the paths */}
-              {!reduce && (
-                <>
-                  {[0, 1, 2, 3].map((i) => (
-                    <motion.span
-                      key={i}
-                      className="absolute h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: [0, 1, 1, 0] }}
-                      transition={{ repeat: Infinity, duration: 3, delay: i * 0.4 }}
-                      style={{
-                        top: i % 2 === 0 ? `${12 + i * 6}%` : `${80 - i * 6}%`,
-                        left: i < 2 ? `${12 + i * 4}%` : `${80 - i * 4}%`,
-                      }}
-                    />
-                  ))}
-                </>
-              )}
-
-              {/* Channel chips around edges */}
+              {/* Channel chips around the edges (static) */}
               {channelChips.map((chip, i) => (
                 <motion.div
                   key={chip.label}
-                  className="absolute flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-white shadow/50 border border-white/10"
-                  style={{ backgroundImage: `linear-gradient(135deg, var(--tw-gradient-stops))` }}
+                  className={`absolute flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-white border border-white/10 bg-gradient-to-br ${chip.color} backdrop-blur`}
                   initial={{ opacity: 0, y: 12, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ duration: 0.6, delay: 0.3 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                  {...{ className: `absolute bg-gradient-to-br ${chip.color} backdrop-blur border-white/10` }}
+                  transition={{ duration: 0.6, delay: 0.3 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <chip.icon className="h-4 w-4" />
                   <span>{chip.label}</span>
                 </motion.div>
               ))}
 
-              {/* Position chips */}
+              {/* Place chips */}
               <style>{`
-                /* top-left */
-                .aspect-\[4\/3\] > div:nth-of-type(2) { top: 14%; left: 8%; }
-                /* top-right */
-                .aspect-\[4\/3\] > div:nth-of-type(3) { top: 10%; right: 10%; }
-                /* bottom-left */
-                .aspect-\[4\/3\] > div:nth-of-type(4) { bottom: 12%; left: 12%; }
-                /* bottom-right */
-                .aspect-\[4\/3\] > div:nth-of-type(5) { bottom: 10%; right: 8%; }
+                .aspect-[4/3] > div:nth-of-type(2) { top: 14%; left: 8%; }
+                .aspect-[4/3] > div:nth-of-type(3) { top: 10%; right: 10%; }
+                .aspect-[4/3] > div:nth-of-type(4) { bottom: 12%; left: 12%; }
+                .aspect-[4/3] > div:nth-of-type(5) { bottom: 10%; right: 8%; }
               `}</style>
 
-              {/* Central AI router node */}
+              {/* Central router badge */}
               <motion.div
                 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-44 w-44 rounded-full border border-white/10 bg-white/10 backdrop-blur-xl shadow-2xl flex items-center justify-center"
                 initial={{ scale: 0.95, opacity: 0 }}
@@ -440,7 +241,7 @@ export default function Hero() {
                   className="absolute inset-0 rounded-full"
                   style={{
                     background:
-                      'conic-gradient(from 0deg, rgba(34,197,94,0.2), rgba(56,189,248,0.2), rgba(99,102,241,0.2), rgba(34,197,94,0.2))',
+                      'conic-gradient(from 0deg, rgba(34,197,94,0.18), rgba(56,189,248,0.18), rgba(99,102,241,0.18), rgba(34,197,94,0.18))',
                     filter: 'blur(10px)',
                   }}
                 />
@@ -448,42 +249,27 @@ export default function Hero() {
                   <Bot className="h-7 w-7 text-cyan-300" />
                   <div className="mt-2 text-xs text-slate-200/90">AI Router</div>
                 </div>
-                {/* pulse ring */}
+                {/* slow pulse ring */}
                 <motion.span
                   className="absolute inset-0 rounded-full border border-cyan-300/40"
-                  initial={{ scale: 1, opacity: 0.6 }}
-                  animate={reduce ? {} : { scale: [1, 1.08, 1], opacity: [0.6, 0.2, 0.6] }}
+                  initial={{ scale: 1, opacity: 0.5 }}
+                  animate={reduce ? {} : { scale: [1, 1.06, 1], opacity: [0.5, 0.25, 0.5] }}
                   transition={{ duration: 3, repeat: Infinity }}
                 />
               </motion.div>
 
-              {/* Smart inbox at bottom center */}
-              <motion.div
-                className="absolute left-1/2 -translate-x-1/2 bottom-6 rounded-xl border border-white/10 bg-white/10 backdrop-blur px-4 py-2 text-white flex items-center gap-2 shadow-lg"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.6 }}
-              >
-                <Inbox className="h-4 w-4 text-emerald-300" />
-                <span className="text-sm">Smart Inbox: FNOL created • Validation passed</span>
-              </motion.div>
-
-              {/* Incoming message bubbles that travel toward center */}
+              {/* Halo rings */}
               {!reduce && (
                 <>
-                  {[0, 1, 2].map((n) => (
+                  {[1, 1.5, 2].map((s, i) => (
                     <motion.div
-                      key={n}
-                      className="absolute text-xs text-white/90 px-3 py-2 rounded-lg border border-white/10 bg-white/10 backdrop-blur"
-                      initial={{ opacity: 0, x: n % 2 ? 20 : -20, y: n * 10 }}
-                      animate={{ opacity: [0, 1, 1, 0], x: [0, (n % 2 ? -30 : 30), (n % 2 ? -60 : 60)], y: [0, -6, -12] }}
-                      transition={{ duration: 5, delay: 0.8 + n * 0.7, repeat: Infinity, repeatDelay: 1.5 }}
-                      style={{ top: `${20 + n * 16}%`, left: `${n % 2 ? 70 - n * 5 : 15 + n * 5}%` }}
-                    >
-                      {n === 0 && 'Policy # • Loss date'}
-                      {n === 1 && 'Attachments • Location'}
-                      {n === 2 && 'Driver • Vehicle'}
-                    </motion.div>
+                      key={i}
+                      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10"
+                      style={{ width: `${s * 280}px`, height: `${s * 280}px` }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: [0.12, 0.2, 0.12] }}
+                      transition={{ duration: 4 + i, repeat: Infinity, delay: i * 0.4 }}
+                    />
                   ))}
                 </>
               )}
